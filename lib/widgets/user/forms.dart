@@ -17,12 +17,14 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:wger/helpers/getLocale.dart';
 import 'package:wger/models/user/profile.dart';
 import 'package:wger/providers/user.dart';
 import 'package:wger/theme/theme.dart';
+
+import '../../providers/change_language.dart';
 
 class UserProfileForm extends StatelessWidget {
   late final Profile _profile;
@@ -40,6 +42,26 @@ class UserProfileForm extends StatelessWidget {
       key: _form,
       child: Column(
         children: [
+          Consumer<ChangeLanguage>(
+            builder: (context, language, child) {
+              return DropdownMenu<String>(
+                // initialSelection: "English",
+                hintText: language.currentLanguage,
+                onSelected: (String? value) {
+                  if (value != null) language.setLanguage(value);
+                },
+                dropdownMenuEntries: List.generate(
+                  GetLanguages.languages.length,
+                  (int index) {
+                    return DropdownMenuEntry<String>(
+                      value: GetLanguages.locales[index],
+                      label: GetLanguages.languages[index],
+                    );
+                  },
+                ),
+              );
+            },
+          ),
           ListTile(
             leading: const Icon(Icons.person, color: wgerPrimaryColor),
             title: Text(AppLocalizations.of(context).username),
@@ -84,7 +106,8 @@ class UserProfileForm extends StatelessWidget {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
-                      AppLocalizations.of(context).verifiedEmailInfo(_profile.email),
+                      AppLocalizations.of(context)
+                          .verifiedEmailInfo(_profile.email),
                     ),
                   ),
                 );
@@ -94,7 +117,8 @@ class UserProfileForm extends StatelessWidget {
           ElevatedButton(
             style: ElevatedButton.styleFrom(
                 backgroundColor: wgerPrimaryButtonColor,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50))),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50))),
             onPressed: () async {
               // Validate and save the current values to the weightEntry
               final isValid = _form.currentState!.validate();
@@ -107,7 +131,9 @@ class UserProfileForm extends StatelessWidget {
               context.read<UserProvider>().saveProfile();
               Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(AppLocalizations.of(context).successfullySaved)),
+                SnackBar(
+                    content:
+                        Text(AppLocalizations.of(context).successfullySaved)),
               );
             },
             child: Text(AppLocalizations.of(context).save),
