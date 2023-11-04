@@ -18,6 +18,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:wger/theme/theme.dart';
 
 /// Arguments passed to the form screen
@@ -55,13 +56,15 @@ class FormScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final FormScreenArguments args =
         ModalRoute.of(context)!.settings.arguments as FormScreenArguments;
+    final appLocalizations = AppLocalizations.of(context);
 
     return Scaffold(
       backgroundColor: args.backgroundColor,
-      appBar: AppBar(title: Text(args.title)),
+      appBar: AppBar(title: Text(appLocalizations.labelDashboard)),
       body: args.hasListView
           ? Scrollable(
-              viewportBuilder: (BuildContext context, ViewportOffset position) => Padding(
+              viewportBuilder:
+                  (BuildContext context, ViewportOffset position) => Padding(
                 padding: args.padding,
                 child: args.widget,
               ),
